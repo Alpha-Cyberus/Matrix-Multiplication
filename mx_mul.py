@@ -14,14 +14,18 @@ class Matrix:
 
 
 mx_list = []
+mx_result = Matrix(0, 0)
 mxcomp = False
 
 
 def main():
-    generate_matrices()
-    compat_test()
+    for i in range(2):                 # mow many matrices to make
+        mx_define(i + 1)
     mx_populate()
     mx_confirm()
+    mx_multiply()
+    print("The product of these matrices is:")
+    mx_result.printval()
 
 
 def mx_size_set(dim):                   # define size of single matrix dimension
@@ -40,7 +44,7 @@ def mx_size_set(dim):                   # define size of single matrix dimension
     return n
 
 
-def mx_size_confirm(mxnum, r, c):       # confirm size of single matrix dimension
+def mx_size_confirm(mxnum, r, c):       # prompt user to confirm matrix dimension is correct
     print("Matrix %s's size is [%sx%s] \r\nIs this correct?" % (mxnum, r, c))
     while True:
         yn = input("[y/n]")
@@ -49,27 +53,19 @@ def mx_size_confirm(mxnum, r, c):       # confirm size of single matrix dimensio
             break
         elif yn.lower() in ['n', 'no']:
             print("confirmed no")
-            mx_size(mxnum)
+            mx_define(mxnum)
             break
         else:
             continue
 
 
-def mx_size(mxnum):                     # instantiate empty matrix, add to mx_list
-    print("Configure Matrix %s's dimensions" % mxnum)
+def mx_define(mxnum):                     # instantiate empty matrix, add to mx_list
+    print("Define Matrix %s's dimensions" % mxnum)
     r = mx_size_set("rows")
     c = mx_size_set("columns")
     # mx_size_confirm(mxnum, r, c)
+    # compat_test()
     mx_list.append(Matrix(r, c))
-
-
-def generate_matrices():                # generate n matrices for multiplication
-    i = int(1)
-    while i <= 2:                       # mow many matrices to make
-        mx_size(i)
-        i += 1
-    for m in range(len(mx_list)):
-        print("matrix " + str(m + 1) + " = " + mx_list[m].size())
 
 
 def compat_test():                      # test matrix compatibility for multiplication
@@ -80,12 +76,12 @@ def compat_test():                      # test matrix compatibility for multipli
         print("compatible!")
         mxcomp = True
     else:
-        print("These matrices are incompatible and cannot be multiplied. Matrix 1's rows must be equal to Matrix 2's columns.")
+        print("These matrices are incompatible and cannot be multiplied. Matrix 1's columns must be equal to Matrix 2's rows.")
 
 
 def mx_populate():                      # allow user to populate matrices with values
     # loop all matrices
-    print("Input values for each matrix row by row. Values can be any whole number.")
+    print("Input values for each matrix one at a time. Values can be any whole number.")
     for imat in range(len(mx_list)):                # loop each matrix
         print("Matrix " + str(imat + 1) + ":")
         for irow in range(mx_list[imat].row):       # loop each row
@@ -103,24 +99,22 @@ def mx_populate():                      # allow user to populate matrices with v
                 mx_list[imat].val[irow].append(newval)
 
 
-def mx_confirm():
-    print("Values of each matrix are as follows:")
+def mx_confirm():                       # display values in all matrices
+    print("Values of each matrix are:")
     for imat in range(len(mx_list)):
         print("Matrix " + str(imat + 1) + ":")
         mx_list[imat].printval()
-    print("")
+
+
+def mx_multiply():                      # multiply matrices together
+    for i in range(mx_list[0].row):     # for each row in matrix a
+        mx_result.val.append([])
+        for j in range(mx_list[1].col):  # for each column in matrix b
+            calc = 0
+            for k in range(mx_list[1].row):  # for each row within each column in matrix b
+                calc = calc + (mx_list[0].val[i][k] * mx_list[1].val[k][j])
+            mx_result.val[i].append(calc)
 
 
 main()
-
-
-#                                       begin multiplication
-#                                       iterate through matrices
-#                                       output to result matrix
-#                                       display results
-
-#                                       MATRIX CALCULATION
-#                                       compatibility = MX1.col = MX2.rows
-#                                       result = MX1.row x MX2.col
-
-# Changelog v0.1.0a - added - users can populate matrices with values - matrix class method for printing all values - feedback to show user content of all matrices
+# Changelog v0.2.0a - added - matrix multiplication - improved - prompts
